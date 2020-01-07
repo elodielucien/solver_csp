@@ -16,9 +16,177 @@
     <br/>
 
     <label id="res">Solution</label>
+
    
+
+
+        <script type="text/javascript" src="http://localhost:3000/csp/lib/require.js"></script>
+        <script>
+            require.config({
+                baseUrl: "http://localhost:3000/csp/src"
+            });
+
+
+            function getTerme(L) {
+                let longueur = L.length
+                let terme;
+                for (let i = 0; i< longueur; i++) {
+                    terme += Math.pow(10, longueur-i-1)*L[i]
+                }
+                
+                return terme
+            }
+
+            var solve = function (){
+
+
+                let m1 = document.getElementById('mot1').value.split('')
+                let m2 = document.getElementById('mot2').value.split('')
+                let m3 = document.getElementById('mot3').value.split('')
+                let uniquesLettres = [...new Set(m1.concat(m2).concat(m3))]
+                let n1 = m1.length
+                let n2 = m2.length
+                let n3 = m3.length
+
+                function genPower(n){
+                    return Math.pow(10, n)
+                }
+
+                function generate(m1, m2, m3){
+                    let len1 = m1.length
+                    let len2 = m2.length
+                    let len3 = m3.length
+
+                    let exp1 = 0, exp2 = 0, exp3 = 0;
+
+                    for(let i = 0; i< len1; i++){
+                        exp1 += m1[i]*genPower(len1-i-1)
+                    }
+
+                    for(let i = 0; i< len2; i++){
+                        exp2 += m2[i]*genPower(len2-i-1)
+                    }
+
+                    for(let i = 0; i< len3; i++){
+                        exp3 += m3[i]*genPower(len3-i-1)
+                    }
+
+                    return [exp1, exp2, exp3]
+
+
+                }
+
+
+
+                return require(
+            
+                ['csp', 'Hash', 'Set'],
+            
+                    function(csp, Hash, Set) {
+
+                        
+                        window.Hash = Hash;
+                        window.Set = Set;
+
+
+                        //à appeler avec m1, m2 et m3 pour ensuite envoyer la contrainte getTerme(m1) + getTerme(m2) = getTerme(m3) 
+                        // <=> (ex:) 1000*S + 100*E + 10*N + D 
+                        //   +       1000*M + 100*O + 10*R + E 
+                    //    = 10000*M+ 1000*O  + 100*N + 10*E + Y
+                        
+                        var p = csp.DiscreteProblem();
+                        for(let i = 0 ; i< uniquesLettres.length ; i++) {
+                            p.addVariable(uniquesLettres[i],[0,1,2,3, 4, 5, 6, 7, 8, 9]);
+                        }
+                        
+                        var terme1 = getTerme(m1)
+                        var terme2 = getTerme(m2)
+                        var terme3 = getTerme(m3)
+                        
+
+
+                        /*
+                        var terme1 = "1000*S + 100*E + 10*N + D "
+                        var terme2 = "1000*M + 100*O + 10*R + E "
+                        var terme3 = "10000*M+ 1000*O  + 100*N + 10*E + Y "
+                        */
+
+                        
+                        p.addConstraint(
+                            [m1[0], m2[0], m3[0]],
+                            function (a, b, c) {
+                                return (a != 0 && b!=0 && c!=0)
+                            }
+                        )
+                        
+                        /*
+                        p.addConstraint(
+                            ["terme1", "terme2", "terme3"],
+                            
+                            function(terme1, terme2, terme3){
+                                return terme1 + terme2 === terme3
+                            }
+                        )
+                        */
+
+
+
+                        p.addConstraint(
+                            ["E", "N", "D", "O", "R", "Y"],
+                            function (E, N, D, O, R, Y){
+                                //let listExp = generate(m1, m2, m3)
+                                //return Math.eval(listExp[0] + listExp[1]) === Math.eval(listExp[2])
+
+                                return (100*E + 10*N + D + 100*O + 10*R + E === 1000*O  + 100*N + 10*E + Y)
+                            }
+                        )
+                        
+
+                        
+
+            
+                        /*
+                        p.addConstraint(
+                            uniquesLettres,
+                            function (S, E, N, D, M, O, R, Y){
+                                return (S != E && E != N && N != D && D != M && M != O && O != R && R!= Y)
+                            }
+                        )
+                        */
+
+                      /*  p.addConstraint(
+                            uniquesLettres,
+                            function (S, E, N, D, M, O, R, Y){
+                                return (1000*S + 100*E + 10*N + D + 1000*M + 100*O + 10*R + E === 10000*M + 1000*O + 100*N + 10*E + Y)
+                            }
+                        )
+
+                        */
+
+                     
+
+                       console.log(p.getSolutions()) 
+
+
+
+                        
+                        // p.addConstraint(
+                        // ["a", "b"],
+                        // function(a, b) { return a*2 === b; }
+                        // );
+
+                        // p.addConstraint(
+                        // ["b", "c"],
+                        // function(b, c) { return b*2 === c; }
+                        // );
+                        
+                    }
+                )
+            }
+        </script>
         <script type = "module">
-            import csp from './'
+            /*
+            import csp from 'http://localhost:3000/csp/lib/require.js'
             
             let m1 = document.getElementById('mot1').value.split('')
             let m2 = document.getElementById('mot2').value.split('')
@@ -42,9 +210,10 @@
 
                 return terme
             }
-
-
+            */
+            
 
         </script>
     </body>
 </html>
+
