@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />     
+    </head>
+
+    <body>
+        <form id = "form">
+            <label><input type="text" id = "mot1" /> Mot1</label><br />
+            <label><input type="text" id = "mot2" /> Mot2</label><br />
+            <label><input type="text" id = "mot3" /> Mot3</label><br />
+    </form>
+    <button id="button" onclick="solve()">Solve</button>
+
+    <br/>
+    <br/>
+
+    <label id="res">Solution</label>
+
+   
+
+
+<script type="text/javascript" src="http://localhost:3000/csp/lib/require.js"></script>
+        <script>
+             require.config({
+              baseUrl: "http://localhost:3000/csp/src"
+            });
+
+
+        function vecteur(max) {
+            var vect = []
+            for (let i = 0; i < max ; i ++) {
+                vect[i] = i
+            }
+            return vect
+        }
+
+
+        var solve = function (){
+
+
+        let m1 = document.getElementById('mot1').value.split('')
+        let m2 = document.getElementById('mot2').value.split('')
+        let m3 = document.getElementById('mot3').value.split('')
+        let uniquesLettres = [...new Set(m1.concat(m2).concat(m3))]
+        let terme1 
+        let terme2 
+        let terme3 
+
+
+        return require(
+
+            ['csp', 'Hash', 'Set'],
+
+                function(csp, Hash, Set) {
+                    window.Hash = Hash;
+                    window.Set = Set;
+
+
+                    var p = csp.DiscreteProblem();
+
+                     //1 : on déclare toutes les variables du problème 
+                     for(let i = 0 ; i< uniquesLettres.length ; i++) {
+                            p.addVariable(uniquesLettres[i],[0,1,2,3, 4, 5, 6, 7, 8, 9])
+                        }
+
+            
+                    p.addVariable(terme1, vecteur(98765) )
+                    p.addVariable(terme2, vecteur(98765) )
+                    p.addVariable(terme3, vecteur(98765) )
+                    
+                    for(let i = 0 ; i < m1.length ; i ++) {
+                        p.addVariable(m1[i], [0,1,2,3, 4, 5, 6, 7, 8, 9] )
+                    }
+                    for(let i = 0 ; i < m2.length ; i ++) {
+                        p.addVariable(m2[i], [0,1,2,3, 4, 5, 6, 7, 8, 9] )
+                    }
+                    for(let i = 0 ; i < m3.length ; i ++) {
+                        p.addVariable(m3[i], [0,1,2,3, 4, 5, 6, 7, 8, 9] )
+                    }
+
+                //contrainte 1eres lettres non nulles
+                p.addConstraint(
+                    [m1[0]],
+                    function(a) {
+                        return (a != 0)
+                    }
+                )
+                p.addConstraint(
+                    [m2[0]],
+                    function(a) {
+                        return (a != 0)
+                    }
+                )
+                p.addConstraint(
+                    [m3[0]],
+                    function(a) {
+                        return (a != 0)
+                    }
+                )
+                
+                //terme 1 = 10^3*m1[0] + 10^2*m1[1] + 10^1*m1[2] + 10^0*m1[3]
+                for(let i = 0 ; i < m1.length ; i ++) {
+                    p.addConstraint(
+                        ["terme1", m1[i]],
+                        function (a, b) {
+                             return (a === a + Math.pow(10,m1.length-i-1)* b)
+                         }
+                    )
+                }
+                
+                //terme 2
+                for(let i = 0 ; i < m2.length ; i ++) {
+                    p.addConstraint(
+                        ["terme2", m2[i]],
+                        function (a, b) {
+                             return (a === a + Math.pow(10,m2.length-i-1)* b)
+                         }
+                    )
+                }
+                
+                //terme 3
+                for(let i = 0 ; i < m3.length ; i ++) {
+                    p.addConstraint(
+                        ["terme3", m3[i]],
+                        function (a, b) {
+                             return (a === a + Math.pow(10,m3.length-i-1)* b)
+                         }
+                    )
+                }
+
+                //contrainte finale
+                p.addConstraint(
+                    ["terme1", "terme2", "terme3"],
+                    function (a, b, c) {
+                        return (a + b === c)
+                    }
+                )
+                 
+
+                console.log(p.getSolutions()) 
+
+
+
+                    
+                    // p.addConstraint(
+                    // ["a", "b"],
+                    // function(a, b) { return a*2 === b; }
+                    // );
+
+                    // p.addConstraint(
+                    // ["b", "c"],
+                    // function(b, c) { return b*2 === c; }
+                    // );
+                    
+                }
+            )
+    }
+     </script>

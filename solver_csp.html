@@ -36,6 +36,23 @@
                 
                 return terme
             }
+            
+            //vrai si tous les éléments de la liste L sont différents, faux sinon
+            function allDifferent(L) {
+                let elementCompare 
+                let res = true
+                for(let i = 0 ; i< L.length ; i++) {
+                    elementCompare = L[i]
+                    for(let j = i+1; j< L.length ; j++) {
+                        if(elementCompare == L[j]) {
+                            res = false
+                        }
+                    }
+                }
+                return res
+            }
+
+            
 
             var solve = function (){
 
@@ -48,35 +65,6 @@
                 let n2 = m2.length
                 let n3 = m3.length
 
-                function genPower(n){
-                    return Math.pow(10, n)
-                }
-
-                function generate(m1, m2, m3){
-                    let len1 = m1.length
-                    let len2 = m2.length
-                    let len3 = m3.length
-
-                    let exp1 = 0, exp2 = 0, exp3 = 0;
-
-                    for(let i = 0; i< len1; i++){
-                        exp1 += m1[i]*genPower(len1-i-1)
-                    }
-
-                    for(let i = 0; i< len2; i++){
-                        exp2 += m2[i]*genPower(len2-i-1)
-                    }
-
-                    for(let i = 0; i< len3; i++){
-                        exp3 += m3[i]*genPower(len3-i-1)
-                    }
-
-                    return [exp1, exp2, exp3]
-
-
-                }
-
-
 
                 return require(
             
@@ -87,31 +75,19 @@
                         
                         window.Hash = Hash;
                         window.Set = Set;
-
-
-                        //à appeler avec m1, m2 et m3 pour ensuite envoyer la contrainte getTerme(m1) + getTerme(m2) = getTerme(m3) 
-                        // <=> (ex:) 1000*S + 100*E + 10*N + D 
-                        //   +       1000*M + 100*O + 10*R + E 
-                    //    = 10000*M+ 1000*O  + 100*N + 10*E + Y
                         
                         var p = csp.DiscreteProblem();
+                        
+
+                        //1 : on déclare toutes les variables du problème 
                         for(let i = 0 ; i< uniquesLettres.length ; i++) {
                             p.addVariable(uniquesLettres[i],[0,1,2,3, 4, 5, 6, 7, 8, 9]);
                         }
                         
-                        var terme1 = getTerme(m1)
-                        var terme2 = getTerme(m2)
-                        var terme3 = getTerme(m3)
-                        
 
-
-                        /*
-                        var terme1 = "1000*S + 100*E + 10*N + D "
-                        var terme2 = "1000*M + 100*O + 10*R + E "
-                        var terme3 = "10000*M+ 1000*O  + 100*N + 10*E + Y "
-                        */
-
-                        
+                        console.log(p)
+                    
+                        //les premières lettres de chaque mot ne sont pas zéro
                         p.addConstraint(
                             [m1[0], m2[0], m3[0]],
                             function (a, b, c) {
@@ -119,67 +95,129 @@
                             }
                         )
                         
-                        /*
-                        p.addConstraint(
-                            ["terme1", "terme2", "terme3"],
-                            
-                            function(terme1, terme2, terme3){
-                                return terme1 + terme2 === terme3
-                            }
-                        )
-                        */
-
-
-
-                        p.addConstraint(
-                            ["E", "N", "D", "O", "R", "Y"],
-                            function (E, N, D, O, R, Y){
-                                //let listExp = generate(m1, m2, m3)
-                                //return Math.eval(listExp[0] + listExp[1]) === Math.eval(listExp[2])
-
-                                return (100*E + 10*N + D + 100*O + 10*R + E === 1000*O  + 100*N + 10*E + Y)
-                            }
-                        )
-                        
-
-                        
-
-            
-                        /*
+                    switch(document.getElementById('mot1').value) {
+                        case 'SEND':
+                        //toutes différentes
                         p.addConstraint(
                             uniquesLettres,
                             function (S, E, N, D, M, O, R, Y){
-                                return (S != E && E != N && N != D && D != M && M != O && O != R && R!= Y)
+                                return (allDifferent([S,E,N,D,M,O,R,Y]))
                             }
                         )
-                        */
-
-                      /*  p.addConstraint(
+                        
+                       //m1 + m2 = m3
+                        p.addConstraint(
                             uniquesLettres,
-                            function (S, E, N, D, M, O, R, Y){
-                                return (1000*S + 100*E + 10*N + D + 1000*M + 100*O + 10*R + E === 10000*M + 1000*O + 100*N + 10*E + Y)
+                            function(S, E, N, D, M, O, R, Y) {
+                                return(1000*S + 100*E + 10*N + D 
+                                     + 1000*M + 100*O + 10*R + E 
+                          === 10000*M+ 1000*O  + 100*N + 10*E + Y )
+                            }
+                        )
+                        break
+
+                        case 'KILO':
+                        p.addConstraint(
+                            uniquesLettres,
+                            function (K,I,L,O,T,N,E){
+                                return (allDifferent([K,I,L,O,T,N,E]))
                             }
                         )
 
-                        */
+                        p.addConstraint(
+                            uniquesLettres,
+                            function(K,I,L,O,T,N,E) {
+                                return(1000*K + 100*I + 10*L + O 
+                                     + 1000*K + 100*I + 10*L + O 
+                          === 10000*T+ 1000*O  + 100*N + 10*N + E )
+                            }
+                        )
+                        break
 
-                     
+                        case'CRYPTA':
+                        p.addConstraint(
+                            uniquesLettres,
+                            function (C,R,Y,P,T,A,I,H,M,E){
+                                return (allDifferent([C,R,Y,P,T,A,I,H,M,E]))
+                            }
+                        )
+
+                        p.addConstraint(
+                            uniquesLettres,
+                            function(C,R,Y,P,T,A,I,H,M,E) {
+                                return(100000*C + 10000*R + 1000*Y + 100*P + 10*T + A 
+                                     + 100000*R + 10000*I + 1000*T + 100*H + 10*M + E 
+                          === 1000000*E + 100000*M + 10000*P + 1000*E+ 100*T  + 10*R + E )
+                            }
+                        )
+                        break
+
+                        case 'OASIS':
+                        p.addConstraint(
+                            uniquesLettres,
+                            function (O,A,S,I,L,E,M,R,G){
+                                return (allDifferent([O,A,S,I,L,E,M,R,G]))
+                            }
+                        )
+
+                        p.addConstraint(
+                            uniquesLettres,
+                            function(O,A,S,I,L,E,M,R,G) {
+                                return(10000*O + 1000*A + 100*S + 10*I + S
+                                     + 100000*S + 10000*O + 1000*L + 100*E + 10*I + L
+                          === 100000*M + 10000*I + 1000*R + 100*A+ 10*G + E )
+                            }
+                        )
+                        break
+
+                        case 'LECON':
+                        p.addConstraint(
+                            uniquesLettres,
+                            function (L,E,C,O,N,V,D,I,R){
+                                return (allDifferent([L,E,C,O,N,V,D,I,R]))
+                            }
+                        )
+
+                        p.addConstraint(
+                            uniquesLettres,
+                            function(L,E,C,O,N,V,D,I,R) {
+                                return(10000*L + 1000*E + 100*C + 10*O + N
+                                     + 10000*E + 1000*L + 100*E + 10*V + E
+                          === 100000*D + 10000*E + 1000*V + 100*O+ 10*I + R )
+                            }
+                        )
+                        break
+
+                        case 'CHEVAL':
+                        p.addConstraint(
+                            uniquesLettres,
+                            function (C,H,E,V,A,L,O,I,S,U){
+                                return (allDifferent([C,H,E,V,A,L,O,I,S,U]))
+                            }
+                        )
+
+                        p.addConstraint(
+                            uniquesLettres,
+                            function(C,H,E,V,A,L,O,I,S,U) {
+                                return(100000*C + 10000*H + 1000*E + 100*V + 10*A + L
+                                     + 10000*V + 1000*A + 100*C + 10*H + E
+                          === 100000*O + 10000*I + 1000*S + 100*E+ 10*A + U )
+                            }
+                        )
+                        break
+
+                        default: console.log('Puzzle non pris en charge par le solveur.')
+                        
+
+                    }   
+                        
 
                        console.log(p.getSolutions()) 
+                       for(let i =0; i<p.getSolutions()[0].length; i++ ) {
+                        alert(p.getSolutions()[0][i])
 
-
-
-                        
-                        // p.addConstraint(
-                        // ["a", "b"],
-                        // function(a, b) { return a*2 === b; }
-                        // );
-
-                        // p.addConstraint(
-                        // ["b", "c"],
-                        // function(b, c) { return b*2 === c; }
-                        // );
-                        
+                       }
+                                         
                     }
                 )
             }
@@ -188,13 +226,6 @@
             /*
             import csp from 'http://localhost:3000/csp/lib/require.js'
             
-            let m1 = document.getElementById('mot1').value.split('')
-            let m2 = document.getElementById('mot2').value.split('')
-            let m3 = document.getElementById('mot3').value.split('')
-            let uniquesLettres = [...new Set(m1.concat(m2).concat(m3))]
-            let n1 = m1.length
-            let n2 = m2.length
-            let n3 = m3.length
 
             //à appeler avec m1, m2 et m3 pour ensuite envoyer la contrainte getTerme(m1) + getTerme(m2) = getTerme(m3) 
             // <=> (ex:) 1000*S + 100*E + 10*N + D 
