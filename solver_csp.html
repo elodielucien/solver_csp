@@ -83,9 +83,7 @@
                         for(let i = 0 ; i< uniquesLettres.length ; i++) {
                             p.addVariable(uniquesLettres[i],[0,1,2,3, 4, 5, 6, 7, 8, 9]);
                         }
-                        
-
-                        console.log(p)
+                    
                     
                         //les premières lettres de chaque mot ne sont pas zéro
                         p.addConstraint(
@@ -105,6 +103,7 @@
                             }
                         )
                         
+                        
                        //m1 + m2 = m3
                         p.addConstraint(
                             uniquesLettres,
@@ -123,6 +122,7 @@
                                 return (allDifferent([K,I,L,O,T,N,E]))
                             }
                         )
+                        
 
                         p.addConstraint(
                             uniquesLettres,
@@ -141,6 +141,7 @@
                                 return (allDifferent([C,R,Y,P,T,A,I,H,M,E]))
                             }
                         )
+                        
 
                         p.addConstraint(
                             uniquesLettres,
@@ -159,6 +160,7 @@
                                 return (allDifferent([O,A,S,I,L,E,M,R,G]))
                             }
                         )
+                        
 
                         p.addConstraint(
                             uniquesLettres,
@@ -177,6 +179,7 @@
                                 return (allDifferent([L,E,C,O,N,V,D,I,R]))
                             }
                         )
+                        
 
                         p.addConstraint(
                             uniquesLettres,
@@ -195,6 +198,7 @@
                                 return (allDifferent([C,H,E,V,A,L,O,I,S,U]))
                             }
                         )
+                        
 
                         p.addConstraint(
                             uniquesLettres,
@@ -210,39 +214,16 @@
                         
 
                     }   
-                        
-
-                       console.log(p.getSolutions()) 
-                       for(let i =0; i<p.getSolutions()[0].length; i++ ) {
-                        alert(p.getSolutions()[0][i])
-
-                       }
+                       console.log(p.getSolutions()[0]) 
+                       //for(let i =0; i<p.getSolutions()[0].length; i++ ) {
+                       // alert(p.getSolutions()[0][i])
+                      // }
                                          
                     }
                 )
             }
         </script>
-        <script type = "module">
-            /*
-            import csp from 'http://localhost:3000/csp/lib/require.js'
-            
-
-            //à appeler avec m1, m2 et m3 pour ensuite envoyer la contrainte getTerme(m1) + getTerme(m2) = getTerme(m3) 
-            // <=> (ex:) 1000*S + 100*E + 10*N + D 
-            //   +       1000*M + 100*O + 10*R + E 
-        //    = 10000*M+ 1000*O  + 100*N + 10*E + Y
-        
-            function getTerme(L) {
-                let longueur = L.length
-                let terme = 0;
-                for (let i = 0; i< longueur; i++) {
-                    terme += 10^(longueur-i-1)*L[i]
-                }
-
-                return terme
-            }
-            */
-            
+        <script type = "module">            
 
         </script>
     </body>
